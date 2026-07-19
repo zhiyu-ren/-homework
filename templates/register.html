@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block title %}用户注册 - 用户管理系统{% endblock %}
+{% block content %}
+<div class="card register-card">
+    <h2 class="card-title">用户注册</h2>
+    <p class="card-subtitle">创建您的账户</p>
+
+    <form method="post" action="/register" class="register-form">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+
+        <div class="form-group">
+            <label for="username">用户名</label>
+            <input type="text" id="username" name="username" class="form-input"
+                   placeholder="3-32位字母、数字、下划线" maxlength="32"
+                   pattern="^[a-zA-Z][a-zA-Z0-9_-]{1,30}[a-zA-Z0-9]$"
+                   title="用户名必须以字母开头和结尾，只能包含字母、数字、下划线和连字符"
+                   required autocomplete="username">
+        </div>
+        <div class="form-group">
+            <label for="password">密码</label>
+            <input type="password" id="password" name="password" class="form-input"
+                   placeholder="至少12位，包含大小写字母、数字和特殊字符"
+                   minlength="12" required autocomplete="new-password">
+            {% if password_hint %}
+            <div class="form-hint">{{ password_hint }}</div>
+            {% endif %}
+        </div>
+        <div class="form-group">
+            <label for="email">邮箱</label>
+            <input type="email" id="email" name="email" class="form-input"
+                   placeholder="your@email.com" maxlength="254" required autocomplete="email">
+        </div>
+        <div class="form-group">
+            <label for="phone">手机号</label>
+            <input type="tel" id="phone" name="phone" class="form-input"
+                   placeholder="11位中国大陆手机号" pattern="^1[3-9]\d{9}$"
+                   title="请输入11位中国大陆手机号"
+                   maxlength="11" required autocomplete="tel">
+        </div>
+        <button type="submit" class="btn btn-primary btn-block">注 册</button>
+    </form>
+
+    <div class="form-footer">
+        <p>已有账号？<a href="/login" class="link">立即登录</a></p>
+    </div>
+</div>
+{% endblock %}

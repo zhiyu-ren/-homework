@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block title %}首页 - 用户管理系统{% endblock %}
+{% block content %}
+{% if username and user %}
+    <div class="card">
+        <h2 class="card-title">欢迎回来，{{ username }}！</h2>
+        <p class="card-subtitle">以下为您的账户信息</p>
+        <div class="user-info">
+            <div class="info-row">
+                <span class="info-label">用户名</span>
+                <span class="info-value">{{ user.username }}</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">邮箱</span>
+                <span class="info-value">{{ user.email }}</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">手机</span>
+                <span class="info-value">{{ user.phone }}</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">角色</span>
+                <span class="info-value"><span class="badge badge-{{ user.role }}">{{ user.role }}</span></span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">余额</span>
+                <span class="info-value">{{ user.balance }}</span>
+            </div>
+        </div>
+        <div class="card-actions">
+            <a href="/logout" class="btn btn-danger">退出登录</a>
+        </div>
+    </div>
+{% else %}
+    <div class="card card-welcome">
+        <h2 class="card-title">欢迎使用用户管理系统</h2>
+        <p class="card-text">本系统提供安全的用户信息管理服务。</p>
+        <p class="card-text">请登录或注册后查看您的个人信息。</p>
+        <div class="card-actions">
+            <a href="/login" class="btn btn-primary">登 录</a>
+            <a href="/register" class="btn btn-secondary">注 册</a>
+        </div>
+    </div>
+{% endif %}
+{% endblock %}
