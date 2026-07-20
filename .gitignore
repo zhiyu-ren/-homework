@@ -35,3 +35,8 @@ logs/
 # ---------- 操作系统 ----------
 Thumbs.db
 .DS_Store
+
+# ---------- 其他无关目录（非作业内容） ----------
+claude-web-ui/
+claude.zip
+microsoft/
