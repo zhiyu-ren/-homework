@@ -16,8 +16,9 @@ env/
 *.env
 
 # ---------- 数据库 ----------
-data/*.db
-data/*.sqlite
+data/
+*.db
+*.sqlite
 
 # ---------- 日志 ----------
 logs/
