@@ -10,11 +10,35 @@
 |:----:|:----:|:----|:------:|
 | 🟢 **Day 01** | — | 环境搭建 & NPS 默认密码检测工具 | Python / FOFA |
 | 🟢 **Day 02** | [`Class02/`](./Class02) | 用户信息管理系统（安全加固版） | Flask / SQLite / PBKDF2 |
-| ⬜ Day 03 | `Class03/` | *待更新...* | — |
+| 🟢 **Day 03** | [`Class03/`](./Class03) | SQL注入 WAF绕过 Fuzz测试（安全狗） | SQLi / SafeDog / Fuzz |
 | ⬜ Day 04 | `Class04/` | *待更新...* | — |
 | ⬜ Day 05 | `Class05/` | *待更新...* | — |
 
 > 💡 **提示：** 以后每天新建 `ClassXX/` 目录放入当天作业，然后在本 README 的作业导航表中添加一行即可。
+
+---
+
+## 🟢 Day 03 — SQL注入 WAF绕过 Fuzz测试
+
+📂 目录：[`Class03/`](./Class03)
+
+> 对 sqli-labs Less-2 前置的安全狗(WAF)进行系统性 Fuzz 测试，发现 15+ 种绕过方式。
+
+### 核心发现
+
+| 绕过方式 | 效果 |
+|:---------|:------|
+| `seleCT` 混合大小写 | 绕过SELECT关键字检测 ✅ |
+| `@@version` 替代 `version()` | 绕过函数拦截 ✅ |
+| `SUBSTR()` 替代 `mid()` | 绕过函数拦截 ✅ |
+| `LIKE` + `IF()` + `CHAR()` | 构建布尔盲注体系 ✅ |
+| `INTO OUTFILE` | WAF放行 ❌ 但MySQL权限受限 |
+
+[📄 完整Fuzz报告 →](./Class03/WAF绕过Fuzz测试报告.md)
+
+### 技术栈
+
+`SQLi` · `SafeDog WAF` · `Fuzz Testing` · `Boolean Blind Injection` · `MySQL 5.x`
 
 ---
 
