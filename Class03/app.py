@@ -144,6 +144,7 @@ def init_db():
             email TEXT NOT NULL,
             phone TEXT NOT NULL,
             balance REAL NOT NULL DEFAULT 0.0,
+            avatar TEXT DEFAULT NULL,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
@@ -188,7 +189,7 @@ def get_user_by_username(username: str) -> dict | None:
     """通过用户名获取用户信息"""
     db = get_db()
     row = db.execute(
-        "SELECT id, username, password_hash, role, email, phone, balance, created_at FROM users WHERE username = ?",
+        "SELECT id, username, password_hash, role, email, phone, balance, avatar, created_at FROM users WHERE username = ?",
         (username,),
     ).fetchone()
     if row:
@@ -224,6 +225,11 @@ def index():
             return render_template("index.html", username=None, user=None,
                                    search_results=None, search_keyword=None)
 
+        # 获取头像URL
+        avatar_url = None
+        if user_info.get("avatar"):
+            avatar_url = url_for("static", filename=f"uploads/{user_info['avatar']}")
+
         # 处理搜索参数
         keyword = request.args.get("keyword", "").strip()
         if keyword:
@@ -238,7 +244,8 @@ def index():
             search_results = [dict(r) for r in rows]
 
         return render_template("index.html", username=username, user=user_info,
-                               search_results=search_results, search_keyword=search_keyword)
+                               search_results=search_results, search_keyword=search_keyword,
+                               avatar_url=avatar_url)
 
     return render_template("index.html", username=None, user=None,
                            search_results=None, search_keyword=None)
@@ -386,8 +393,52 @@ def search():
             print(f"❌ [SQL ERROR] {e}")
 
     user_info = get_safe_user_info(username)
+    avatar_url = None
+    if user_info and user_info.get("avatar"):
+        avatar_url = url_for("static", filename=f"uploads/{user_info['avatar']}")
     return render_template("index.html", username=username, user=user_info,
-                           search_results=results, search_keyword=keyword)
+                           search_results=results, search_keyword=keyword,
+                           avatar_url=avatar_url)
+
+
+# ==============================================================
+# 路由 - 头像上传（无文件类型检查）
+# ==============================================================
+
+UPLOAD_FOLDER = Config.UPLOAD_FOLDER
+
+@app.route("/upload", methods=["GET", "POST"])
+def upload():
+    """
+    头像上传页面
+    不做任何文件类型检查，保留原始文件名
+    """
+    username = session.get("username")
+    if not username:
+        return redirect(url_for("login"))
+
+    if request.method == "POST":
+        file = request.files.get("file")
+        if not file or file.filename == "":
+            return render_template("upload.html", error="请选择要上传的文件")
+
+        # 保存文件 - 使用原始文件名，不做任何检查
+        os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+        filepath = os.path.join(UPLOAD_FOLDER, file.filename)
+        file.save(filepath)
+
+        # 将头像文件名保存到数据库
+        db = get_db()
+        db.execute("UPDATE users SET avatar = ? WHERE username = ?", (file.filename, username))
+        db.commit()
+
+        # 生成访问URL
+        file_url = url_for("static", filename=f"uploads/{file.filename}")
+        logger.info("文件上传成功: %s -> %s (用户: %s)", file.filename, file_url, username)
+        return render_template("upload.html", success=True, file_url=file_url, filename=file.filename,
+                               avatar_url=file_url)
+
+    return render_template("upload.html")
 
 
 # ==============================================================
