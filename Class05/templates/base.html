@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}用户管理系统{% endblock %}</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-brand">
+            <a href="/" class="brand-link">用户管理系统</a>
+        </div>
+        <div class="navbar-menu">
+            {% if session.get("username") %}
+                <span class="navbar-welcome">欢迎，{{ session.get("username") }}</span>
+                <a href="/" class="nav-link">首页</a>
+                <a href="/profile" class="nav-link">个人中心</a>
+                <a href="/upload" class="nav-link">上传头像</a>
+                <a href="/logout" class="nav-link nav-link-logout">退出</a>
+            {% else %}
+                <a href="/login" class="nav-link">登录</a>
+                <a href="/register" class="nav-link">注册</a>
+            {% endif %}
+        </div>
+    </nav>
+    <main class="container">
+        {% if error %}
+        <div class="alert alert-error">{{ error }}</div>
+        {% endif %}
+        {% if success %}
+        <div class="alert alert-success">{{ success }}</div>
+        {% endif %}
+        {% block content %}{% endblock %}
+    </main>
+    <footer class="footer">
+        <p>&copy; 2026 用户管理系统 | 业务逻辑漏洞实训版</p>
+    </footer>
+</body>
+</html>
