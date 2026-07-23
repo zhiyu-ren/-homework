@@ -13,6 +13,7 @@
 | 🟢 **Day 03** | [`Class03/`](./Class03) | Class02基础上新增注册+搜索，修复SQL注入 | Flask / SQLite / 参数化查询 |
 | 🟢 **Day 04** | [`Class04/`](./Class04) | Class03基础上新增头像上传，修复一句话木马漏洞 | Flask / 白名单 / 幻数校验 |
 | 🟢 **Day 05** | [`Class05/`](./Class05) | Class04基础上新增个人中心+充值，修复业务逻辑漏洞 | Flask / Session校验 / 金额校验 |
+| 🟢 **Day 06** | [`Class06/`](./Class06) | Class05基础上新增动态页面加载，修复路径遍历漏洞 | Flask / 白名单 / 路径校验 |
 
 > 💡 **提示：** 以后每天新建 `ClassXX/` 目录放入当天作业，然后在本 README 的作业导航表中添加一行即可。
 
@@ -197,6 +198,46 @@ python3 app.py
 
 ```bash
 cd Class05
+pip install -r requirements.txt
+python3 app.py
+```
+
+**测试账号：** `admin` / `Admin@2025Secure!`
+
+---
+
+## 🟢 Day 06 — 新增动态页面加载 & 路径遍历漏洞修复
+
+📂 目录：[`Class06/`](./Class06)
+
+> 在 Class05 基础上新增动态页面加载功能，并修复路径遍历漏洞。
+
+### 新增功能
+
+| 功能 | 路由 | 说明 |
+|:----|:----:|:------|
+| 📄 动态页面加载 | `/page?name=help` | 加载帮助中心页面 |
+
+### 修复的漏洞
+
+| 漏洞 | 风险等级 | 修复方式 |
+|:-----|:--------:|:---------|
+| 路径遍历（可读取任意文件） | 🔴 **严重** | ✅ 页面白名单 + 固定.html后缀 |
+
+### 白名单机制
+
+```python
+ALLOWED_PAGES = {"help", "about", "contact"}
+if name not in ALLOWED_PAGES:
+    return "页面不存在"
+```
+
+[📄 完整漏洞修复报告 →](./Class06/新增功能与路径遍历漏洞修复报告.docx)
+
+### 快速启动
+
+```bash
+cd Class06
 pip install -r requirements.txt
 python3 app.py
 ```

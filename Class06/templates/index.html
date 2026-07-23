@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+{% block title %}首页 - 用户管理系统{% endblock %}
+{% block content %}
+
+{% if page_content %}
+<div class="card">
+    <h2 class="card-title">📄 页面内容</h2>
+    <div class="page-content" style="line-height:1.8; color:#333;">
+        {{ page_content | safe }}
+    </div>
+    <div style="margin-top:16px; text-align:center;">
+        <a href="/" class="link">← 返回首页</a>
+    </div>
+</div>
+{% endif %}
+
+{% if username and user %}
+    <div class="card">
+        <div class="profile-header" style="display:flex; align-items:center; gap:24px; margin-bottom:20px;">
+            <div class="avatar-container" style="flex-shrink:0;">
+                {% if avatar_url %}
+                <img src="{{ avatar_url }}" alt="头像" style="width:100px; height:100px; border-radius:50%; object-fit:cover; border:3px solid #1a73e8;">
+                {% else %}
+                <div style="width:100px; height:100px; border-radius:50%; background:linear-gradient(135deg,#1a73e8,#667eea); display:flex; align-items:center; justify-content:center; font-size:36px; color:#fff; font-weight:700; border:3px solid #1a73e8;">
+                    {{ username[0]|upper }}
+                </div>
+                {% endif %}
+            </div>
+            <div style="flex:1;">
+                <h2 class="card-title" style="margin-bottom:4px;">欢迎回来，{{ username }}！</h2>
+                <p style="color:#888; font-size:14px;">用户信息概览</p>
+            </div>
+        </div>
+        <div class="user-info">
+            <div class="info-row"><span class="info-label">用户名</span><span class="info-value">{{ user.username }}</span></div>
+            <div class="info-row"><span class="info-label">邮箱</span><span class="info-value">{{ user.email }}</span></div>
+            <div class="info-row"><span class="info-label">手机</span><span class="info-value">{{ user.phone }}</span></div>
+            <div class="info-row"><span class="info-label">角色</span><span class="info-value">{{ user.role }}</span></div>
+            <div class="info-row"><span class="info-label">余额</span><span class="info-value">¥{{ "%.2f"|format(user.balance) }}</span></div>
+        </div>
+        <div class="card-actions" style="margin-top:20px; display:flex; gap:10px; flex-wrap:wrap;">
+            <a href="/profile" class="btn btn-primary">个人中心</a>
+            <a href="/page?name=help" class="btn btn-secondary">帮助中心</a>
+            <a href="/upload" class="btn btn-secondary">上传头像</a>
+            <a href="/logout" class="btn btn-danger">退出</a>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2 class="card-title">用户搜索</h2>
+        <p class="card-subtitle">搜索系统中的用户</p>
+        <form method="get" action="/search" class="search-form">
+            <div class="search-box">
+                <input type="text" name="keyword" class="form-input search-input"
+                       placeholder="输入用户名或邮箱关键词..."
+                       value="{{ search_keyword or '' }}">
+                <button type="submit" class="btn btn-primary">搜索</button>
+            </div>
+        </form>
+        {% if search_keyword is not none %}
+        <div class="search-results">
+            <h3 class="results-title">搜索结果：关键词 "{{ search_keyword }}"</h3>
+            {% if search_results %}
+            <div class="table-wrapper">
+                <table class="data-table">
+                    <thead><tr><th>ID</th><th>用户名</th><th>邮箱</th><th>手机</th></tr></thead>
+                    <tbody>
+                        {% for row in search_results %}
+                        <tr>
+                            <td><a href="/profile?user_id={{ row.id }}">{{ row.id }}</a></td>
+                            <td>{{ row.username }}</td>
+                            <td>{{ row.email }}</td>
+                            <td>{{ row.phone }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <div class="results-count">共找到 {{ search_results|length }} 条记录</div>
+            {% else %}
+            <div class="no-results">无搜索结果</div>
+            {% endif %}
+        </div>
+        {% endif %}
+    </div>
+
+{% else %}
+    <div class="card welcome-card">
+        <h2 class="card-title">欢迎使用用户管理系统</h2>
+        <p class="card-text">请登录或注册后查看您的个人信息。</p>
+        <div class="card-actions">
+            <a href="/login" class="btn btn-primary">登 录</a>
+            <a href="/register" class="btn btn-secondary">注 册</a>
+        </div>
+    </div>
+{% endif %}
+{% endblock %}
