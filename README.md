@@ -14,6 +14,7 @@
 | 🟢 **Day 04** | [`Class04/`](./Class04) | Class03基础上新增头像上传，修复一句话木马漏洞 | Flask / 白名单 / 幻数校验 |
 | 🟢 **Day 05** | [`Class05/`](./Class05) | Class04基础上新增个人中心+充值，修复业务逻辑漏洞 | Flask / Session校验 / 金额校验 |
 | 🟢 **Day 06** | [`Class06/`](./Class06) | Class05基础上新增动态页面加载，修复路径遍历漏洞 | Flask / 白名单 / 路径校验 |
+| 🟢 **Day 07** | [`Class07/`](./Class07) | Class06基础上新增修改密码，修复CSRF/越权/无密码验证漏洞 | Flask / CSRF Token / 密码验证 |
 
 > 💡 **提示：** 以后每天新建 `ClassXX/` 目录放入当天作业，然后在本 README 的作业导航表中添加一行即可。
 
@@ -238,6 +239,48 @@ if name not in ALLOWED_PAGES:
 
 ```bash
 cd Class06
+pip install -r requirements.txt
+python3 app.py
+```
+
+**测试账号：** `admin` / `Admin@2025Secure!`
+
+---
+
+## 🟢 Day 07 — 新增修改密码 & CSRF/越权漏洞修复
+
+📂 目录：[`Class07/`](./Class07)
+
+> 在 Class06 基础上新增修改密码功能，并修复CSRF、水平越权、无原密码验证漏洞。
+
+### 新增功能
+
+| 功能 | 路由 | 说明 |
+|:----|:----:|:------|
+| 🔑 修改密码 | `/change-password` (POST) | 验证原密码后修改密码 |
+
+### 修复的漏洞
+
+| 漏洞 | 风险等级 | 修复方式 |
+|:-----|:--------:|:---------|
+| CSRF跨站请求伪造 | 🟡 **中危** | ✅ HMAC CSRF Token验证 |
+| 水平越权（可修改他人密码） | 🔴 **严重** | ✅ session获取当前用户 |
+| 无原密码验证 | 🟠 **高危** | ✅ 必须验证原密码 |
+
+### 修复前后对比
+
+| 维度 | 修复前 | 修复后 |
+|:-----|:-------|:-------|
+| CSRF Token | ❌ 无 | ✅ HMAC验证 |
+| 目标用户来源 | 表单隐藏字段 | ✅ session当前用户 |
+| 原密码验证 | ❌ 无 | ✅ 必须验证 |
+
+[📄 完整漏洞修复报告 →](./Class07/CSRF漏洞修复报告.docx)
+
+### 快速启动
+
+```bash
+cd Class07
 pip install -r requirements.txt
 python3 app.py
 ```
