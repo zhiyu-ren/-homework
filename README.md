@@ -15,6 +15,7 @@
 | 🟢 **Day 05** | [`Class05/`](./Class05) | Class04基础上新增个人中心+充值，修复业务逻辑漏洞 | Flask / Session校验 / 金额校验 |
 | 🟢 **Day 06** | [`Class06/`](./Class06) | Class05基础上新增动态页面加载，修复路径遍历漏洞 | Flask / 白名单 / 路径校验 |
 | 🟢 **Day 07** | [`Class07/`](./Class07) | Class06基础上新增修改密码，修复CSRF/越权/无密码验证漏洞 | Flask / CSRF Token / 密码验证 |
+| 🟢 **Day 08** | [`Class08/`](./Class08) | SSTI 漏洞扫描器（Flask/Jinja2模板注入检测） | Python / requests / Jinja2 |
 
 > 💡 **提示：** 以后每天新建 `ClassXX/` 目录放入当天作业，然后在本 README 的作业导航表中添加一行即可。
 
@@ -286,6 +287,45 @@ python3 app.py
 ```
 
 **测试账号：** `admin` / `Admin@2025Secure!`
+
+---
+
+## 🟢 Day 08 — SSTI 漏洞扫描器
+
+📂 目录：[`Class08/`](./Class08)
+
+> 基于 Python 的 SSTI（服务器端模板注入）漏洞扫描器，支持 Flask/Jinja2 模板引擎。
+
+### 功能特性
+
+| 检测类型 | 说明 |
+|:---------|:------|
+| 🔍 基础注入检测 | `{{7*7}}` `{{config}}` `{{''.__class__}}` |
+| 🔗 属性/下标访问 | `__class__.__mro__.__subclasses__()` |
+| 💻 命令执行 | `popen('id').read()` 等多种利用链 |
+| 📁 文件读取 | 通过 builtins.open 读取系统文件 |
+| ⚡ eval 执行 | 通过 builtins.eval 执行任意代码 |
+| ⏱️ 盲注检测 | 基于延时响应判断 |
+
+### 使用方法
+
+```bash
+# GET 方式
+python3 ssti_scanner.py -u "http://target.com/page" -p param
+
+# POST 方式
+python3 ssti_scanner.py -u "http://target.com/page" -p param -X POST
+
+# URL 中标记注入点
+python3 ssti_scanner.py -u "http://target.com/?name=INJECT"
+
+# 批量扫描
+python3 ssti_scanner.py -f urls.txt -o result.json
+```
+
+### 技术栈
+
+`Python` · `requests` · `Jinja2` · `SSTI`
 
 ---
 
