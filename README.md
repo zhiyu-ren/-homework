@@ -15,7 +15,7 @@
 | 🟢 **Day 05** | [`Class05/`](./Class05) | Class04基础上新增个人中心+充值，修复业务逻辑漏洞 | Flask / Session校验 / 金额校验 |
 | 🟢 **Day 06** | [`Class06/`](./Class06) | Class05基础上新增动态页面加载，修复路径遍历漏洞 | Flask / 白名单 / 路径校验 |
 | 🟢 **Day 07** | [`Class07/`](./Class07) | Class06基础上新增修改密码，修复CSRF/越权/无密码验证漏洞 | Flask / CSRF Token / 密码验证 |
-| 🟢 **Day 08** | [`Class08/`](./Class08) | SSTI 漏洞扫描器（Flask/Jinja2模板注入检测） | Python / requests / Jinja2 |
+| 🟢 **Day 08** | [`Class08/`](./Class08) | SSTI漏洞演示+修复 + SSTI扫描器 | Flask / render_template_string / Python |
 
 > 💡 **提示：** 以后每天新建 `ClassXX/` 目录放入当天作业，然后在本 README 的作业导航表中添加一行即可。
 
@@ -290,42 +290,53 @@ python3 app.py
 
 ---
 
-## 🟢 Day 08 — SSTI 漏洞扫描器
+## 🟢 Day 08 — SSTI漏洞演示+修复 & SSTI扫描器
 
 📂 目录：[`Class08/`](./Class08)
 
-> 基于 Python 的 SSTI（服务器端模板注入）漏洞扫描器，支持 Flask/Jinja2 模板引擎。
+> 在 Class07 基础上新增欢迎页和反馈功能（含SSTI漏洞并修复），并附带SSTI扫描器脚本。
 
-### 功能特性
+### 新增功能
 
-| 检测类型 | 说明 |
-|:---------|:------|
-| 🔍 基础注入检测 | `{{7*7}}` `{{config}}` `{{''.__class__}}` |
-| 🔗 属性/下标访问 | `__class__.__mro__.__subclasses__()` |
-| 💻 命令执行 | `popen('id').read()` 等多种利用链 |
-| 📁 文件读取 | 通过 builtins.open 读取系统文件 |
-| ⚡ eval 执行 | 通过 builtins.eval 执行任意代码 |
-| ⏱️ 盲注检测 | 基于延时响应判断 |
+| 功能 | 路由 | 说明 |
+|:----|:----:|:------|
+| 👋 欢迎页 | `/welcome?name=X` | 个性化欢迎页面 |
+| 💬 反馈 | `/feedback` | 用户反馈表单 |
 
-### 使用方法
+### 修复的SSTI漏洞
+
+| 漏洞 | 风险等级 | 修复方式 |
+|:-----|:--------:|:---------|
+| welcome页SSTI（f-string拼接name） | 🔴 **严重** | ✅ Jinja2变量 {{ name }} 传递 |
+| feedback页SSTI（f-string拼接name/message） | 🔴 **严重** | ✅ Jinja2变量 {{ name }} {{ message }} 传递 |
+
+### 修复前后对比
+
+| 维度 | 修复前（漏洞版） | 修复后（安全版） |
+|:-----|:----------------|:----------------|
+| 模板渲染方式 | `f"...{name}..."` 先拼接后渲染 | `{{ name }}` Jinja2变量传递 |
+| {{7*7}} 注入测试 | 计算为49 ✅注入成功 | 显示字符串"{{7*7}}" ❌注入失败 |
+| HTML转义 | ❌ 无转义 | ✅ Jinja2自动转义 |
+
+### SSTI扫描器
+
+配套扫描脚本 `ssti_scanner.py`，可检测SSTI漏洞。
 
 ```bash
-# GET 方式
-python3 ssti_scanner.py -u "http://target.com/page" -p param
-
-# POST 方式
-python3 ssti_scanner.py -u "http://target.com/page" -p param -X POST
-
-# URL 中标记注入点
-python3 ssti_scanner.py -u "http://target.com/?name=INJECT"
-
-# 批量扫描
-python3 ssti_scanner.py -f urls.txt -o result.json
+python3 ssti_scanner.py -u "http://target.com/" -p name
 ```
 
-### 技术栈
+[📄 完整漏洞修复报告 →](./Class08/SSTI漏洞修复报告.docx)
 
-`Python` · `requests` · `Jinja2` · `SSTI`
+### 快速启动
+
+```bash
+cd Class08
+pip install -r requirements.txt
+python3 app.py
+```
+
+**测试账号：** `admin` / `Admin@2025Secure!`
 
 ---
 
