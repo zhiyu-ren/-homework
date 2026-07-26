@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% block title %}Ping测试 - 用户管理系统{% endblock %}
+{% block content %}
+<div class="card ping-card">
+    <h2 class="card-title">🌐 Ping 网络诊断</h2>
+    <p class="card-subtitle">测试网络连通性（支持命令注入测试）</p>
+
+    <form method="post" action="/ping" class="form">
+        <div class="form-group">
+            <label for="ip">IP 地址或域名</label>
+            <input type="text" id="ip" name="ip" class="form-input" placeholder="例如：192.168.1.1 或 127.0.0.1" required>
+        </div>
+        <button type="submit" class="btn btn-primary btn-block">Ping</button>
+    </form>
+    <div class="search-hint" style="margin-top:8px;">
+        💡 输入 IP 地址或域名测试网络连通性
+    </div>
+</div>
+
+{% if error %}
+<div class="card">
+    <h2 class="card-title">❌ 执行错误</h2>
+    <div class="console-output error-output">{{ error }}</div>
+</div>
+{% endif %}
+
+{% if result %}
+<div class="card">
+    <h2 class="card-title">📡 执行结果</h2>
+    <div class="console-output">{{ result }}</div>
+</div>
+{% endif %}
+
+<div class="form-footer" style="text-align:center; margin-top:16px;">
+    <a href="/" class="link">← 返回首页</a>
+</div>
+
+<style>
+.console-output {
+    background: #1a1a2e;
+    color: #00ff88;
+    font-family: 'Courier New', Consolas, monospace;
+    font-size: 13px;
+    padding: 20px;
+    border-radius: 8px;
+    border: 1px solid #333;
+    white-space: pre-wrap;
+    word-break: break-all;
+    line-height: 1.6;
+    max-height: 500px;
+    overflow-y: auto;
+}
+.error-output {
+    color: #ff6b6b;
+}
+.console-output::-webkit-scrollbar {
+    width: 8px;
+}
+.console-output::-webkit-scrollbar-track {
+    background: #0d0d1a;
+    border-radius: 4px;
+}
+.console-output::-webkit-scrollbar-thumb {
+    background: #333;
+    border-radius: 4px;
+}
+</style>
+{% endblock %}

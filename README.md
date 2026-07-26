@@ -16,6 +16,7 @@
 | 🟢 **Day 06** | [`Class06/`](./Class06) | Class05基础上新增动态页面加载，修复路径遍历漏洞 | Flask / 白名单 / 路径校验 |
 | 🟢 **Day 07** | [`Class07/`](./Class07) | Class06基础上新增修改密码，修复CSRF/越权/无密码验证漏洞 | Flask / CSRF Token / 密码验证 |
 | 🟢 **Day 08** | [`Class08/`](./Class08) | SSTI漏洞演示+修复 + SSTI扫描器 | Flask / render_template_string / Python |
+| 🟢 **Day 09** | [`Class09/`](./Class09) | Class08基础上新增Ping诊断，修复命令注入漏洞 | Flask / shlex.quote / shell=False |
 
 > 💡 **提示：** 以后每天新建 `ClassXX/` 目录放入当天作业，然后在本 README 的作业导航表中添加一行即可。
 
@@ -332,6 +333,47 @@ python3 ssti_scanner.py -u "http://target.com/" -p name
 
 ```bash
 cd Class08
+pip install -r requirements.txt
+python3 app.py
+```
+
+**测试账号：** `admin` / `Admin@2025Secure!`
+
+---
+
+## 🟢 Day 09 — 新增Ping网络诊断 & 命令注入漏洞修复
+
+📂 目录：[`Class09/`](./Class09)
+
+> 在 Class08 基础上新增Ping网络诊断功能，并修复命令注入漏洞（shell反弹）。
+
+### 新增功能
+
+| 功能 | 路由 | 说明 |
+|:----|:----:|:------|
+| 🌐 Ping测试 | `/ping` | 网络连通性测试 |
+
+### 修复的漏洞
+
+| 漏洞 | 风险等级 | 修复方式 |
+|:-----|:--------:|:---------|
+| 命令注入（可反弹shell） | 🔴 **严重** | ✅ shlex.quote() + shell=False + 参数列表化 |
+
+### 修复前后对比
+
+| 维度 | 修复前（漏洞版） | 修复后（安全版） |
+|:-----|:----------------|:----------------|
+| 命令拼接 | `f"ping -c 3 {ip}"` | `["ping", "-c", "3", safe_ip]` |
+| shell | `shell=True` | `shell=False` ❌ 禁止shell解析 |
+| 输入过滤 | ❌ 无 | ✅ shlex.quote() |
+| 注入 `127.0.0.1; whoami` | ✅ 执行成功 | ❌ 被拦截 |
+
+[📄 完整漏洞修复报告 →](./Class09/命令注入漏洞修复报告.docx)
+
+### 快速启动
+
+```bash
+cd Class09
 pip install -r requirements.txt
 python3 app.py
 ```
